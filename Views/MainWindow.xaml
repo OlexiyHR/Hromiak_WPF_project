@@ -13,14 +13,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Ім'я користувача:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="1" Text="{Binding User.Username, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="0" Text="Ім'я:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="1" Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Grid.Row="2" Text="Дата народження:" FontWeight="Bold" Margin="0,20,0,5"/>
-        <DatePicker Grid.Row="3" SelectedDate="{Binding User.BirthDate, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="2" Text="Прізвище:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="3" Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Button Grid.Row="4" Content="Розрахувати" Command="{Binding CalculateCommand}" Height="30" Margin="0,20,0,0"/>
+        <TextBlock Grid.Row="4" Text="Адреса електронної пошти:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="5" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <TextBlock Grid.Row="6" Text="Дата народження:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <DatePicker Grid.Row="7" SelectedDate="{Binding BirthDate, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Grid.Row="8" Content="Розрахувати" Command="{Binding CalculateCommand}" Height="30" Margin="0,20,0,0"/>
     </Grid>
 </Window>

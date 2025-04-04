@@ -14,45 +14,114 @@ namespace Hromiak_WPF_project.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private User _user;
+        private string _firstName;
+        private string _lastName;
+        private string _email;
+        private DateTime _birthDate = DateTime.Today;
+        private Person _person;
+        private bool _isCalculating;
 
-        public User User
+        public string FirstName
         {
-            get => _user;
-            set
-            {
-                _user = value;
-                OnPropertyChanged(nameof(User));
-            }
+            get => _firstName;
+            set { _firstName = value; OnPropertyChanged(nameof(FirstName)); }
+        }
+
+        public string LastName
+        {
+            get => _lastName;
+            set { _lastName = value; OnPropertyChanged(nameof(LastName)); }
+        }
+
+        public string Email
+        {
+            get => _email;
+            set { _email = value; OnPropertyChanged(nameof(Email)); }
+        }
+
+        public DateTime BirthDate
+        {
+            get => _birthDate;
+            set { _birthDate = value; OnPropertyChanged(nameof(BirthDate)); }
+        }
+
+        // Readonly Person (створюється після натискання кнопки)
+        public Person Person
+        {
+            get => _person;
+            private set { _person = value; OnPropertyChanged(nameof(Person)); }
+        }
+
+        // Змінна для блокування UI під час обчислень
+        public bool IsCalculating
+        {
+            get => _isCalculating;
+            set { _isCalculating = value; OnPropertyChanged(nameof(IsCalculating)); }
         }
 
         public ICommand CalculateCommand { get; }
 
         public MainViewModel()
         {
-            User = new User();
-            CalculateCommand = new RelayCommand(Calculate);
+            CalculateCommand = new RelayCommand(async () => await CalculateAsync(), () => !IsCalculating);
         }
 
-        private void Calculate(object parameter)
+        private async Task CalculateAsync()
         {
-            if (string.IsNullOrWhiteSpace(User.Username) || User.BirthDate == default)
+            IsCalculating = true;
+            try
             {
-                MessageBox.Show("Будь ласка, заповніть всі поля.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
 
-            if (User.Age < 0 || User.Age > 135)
+                Person = new Person(FirstName, LastName, Email, BirthDate);
+
+                bool validationPassed = await Task.Run(() =>
+                {
+                    // Перевірка: чи заповнені всі поля?
+                    if (string.IsNullOrWhiteSpace(Person.FirstName) ||
+                        string.IsNullOrWhiteSpace(Person.LastName) ||
+                        string.IsNullOrWhiteSpace(Person.Email) ||
+                        Person.BirthDate == DateTime.Today)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                            MessageBox.Show("Будь ласка, заповніть всі поля.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        );
+                        return false;
+                    }
+
+                    // Перевірка віку
+                    int age = Person.CalculateAge();
+                    if (age < 0 || age > 135)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                            MessageBox.Show("Вік користувача некоректний. Перевірте дату народження.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error)
+                        );
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (validationPassed)
+                {
+                    // Якщо перевірки пройшли, відкриваємо сторінку з результатами
+                    var resultsPage = new ResultsView(Person);
+                    resultsPage.Show();
+
+                    Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+                    // Закриваємо головне вікно
+                    Application.Current.MainWindow.Close();
+                }
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Вік користувача некоректний. Перевірте дату народження.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show($"Сталася помилка: {ex.Message}", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            var resultsPage = new ResultsView(User);
-            resultsPage.Show();
-            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
-            Application.Current.MainWindow.Close();
+            finally
+            {
+                IsCalculating = false;
+            }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -63,21 +132,24 @@ namespace Hromiak_WPF_project.ViewModels
 
     public class RelayCommand : ICommand
     {
-        private readonly Action<object> _execute;
+        private readonly Action _execute;
+        private readonly Func<bool> _canExecute;
 
-        public RelayCommand(Action<object> execute)
+        public event EventHandler CanExecuteChanged
         {
-            _execute = execute;
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
-            _execute(parameter);
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute();
+
+        public void Execute(object parameter) => _execute();
     }
 
 }

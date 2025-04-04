@@ -18,7 +18,7 @@ namespace Hromiak_WPF_project.Views
 {
     public partial class ResultsView : Window
     {
-        public ResultsView(User user)
+        public ResultsView(Person user)
         {
             InitializeComponent();
             DataContext = new ResultsViewModel(user);

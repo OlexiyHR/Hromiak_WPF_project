@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hromiak_WPF_project.Views"
         mc:Ignorable="d"
-        Title="ResultsView1" Height="300" Width="500" MinHeight="250" MinWidth="200">
+        Title="ResultsView" Height="300" Width="500" MinHeight="250" MinWidth="200">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
