@@ -31,6 +31,6 @@
         <TextBlock Grid.Row="6" Text="Дата народження:" FontWeight="Bold" Margin="0,0,0,5"/>
         <DatePicker Grid.Row="7" SelectedDate="{Binding BirthDate, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Button Grid.Row="8" Content="Розрахувати" Command="{Binding CalculateCommand}" Height="30" Margin="0,20,0,0"/>
+        <Button Grid.Row="8" Content="Розрахувати" Command="{Binding ProceedCommand}" Height="30" Margin="0,20,0,0"/>
     </Grid>
 </Window>

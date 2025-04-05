@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hromiak_WPF_project.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,17 +9,17 @@ using System.Windows.Controls;
 
 namespace Hromiak_WPF_project.Models
 {
-    public class Person : INotifyPropertyChanged
+    public class Person
     {
         public string FirstName { get; }
         public string LastName { get; }
         public string Email { get; }
         public DateTime BirthDate { get; }
 
-        public readonly bool IsAdult;
-        public readonly string SunSign;
-        public readonly string ChineseSign;
-        public readonly bool IsBirthday;
+        public bool IsAdult { get; private set; }
+        public string SunSign { get; private set; }
+        public string ChineseSign { get; private set; }
+        public bool IsBirthday { get; private set; }
 
         public Person(string firstName, string lastName, string email, DateTime birthDate)
         {
@@ -27,17 +28,37 @@ namespace Hromiak_WPF_project.Models
             Email = email;
             BirthDate = birthDate;
 
-            IsAdult = CalculateAge() >= 18;
-            SunSign = GetWesternZodiac(birthDate);
-            ChineseSign = GetChineseZodiac(birthDate);
-            IsBirthday = birthDate.Month == DateTime.Today.Month && birthDate.Day == DateTime.Today.Day;
+
+            ValidateBirthDate();
+            ValidateEmail();
         }
 
         public Person(string firstName, string lastName, string email)
-            : this(firstName, lastName, email, DateTime.MinValue) { }
+            : this(firstName, lastName, email, DateTime.Today) { }
 
         public Person(string firstName, string lastName, DateTime birthDate)
             : this(firstName, lastName, string.Empty, birthDate) { }
+
+        private void ValidateBirthDate()
+        {
+            if (BirthDate > DateTime.Now)
+            {
+                throw new FutureBirthDateException();
+            }
+
+            if ((DateTime.Now.Year - BirthDate.Year) > 135)
+            {
+                throw new ExcessivelyOldBirthDateException();
+            }
+        }
+
+        private void ValidateEmail()
+        {
+            if (string.IsNullOrEmpty(Email) || !Email.Contains("@") || !Email.Contains("."))
+            {
+                throw new InvalidEmailException();
+            }
+        }
 
         public int CalculateAge()
         {
@@ -50,7 +71,29 @@ namespace Hromiak_WPF_project.Models
             return age;
         }
 
-        private string GetWesternZodiac(DateTime birthDate)
+        // Асинхронна ініціалізація обчислюваних полів
+        public async Task InitAsync()
+        {
+            var ageTask = Task.Run(() => CalculateIsAdult());
+            var sunSignTask = Task.Run(() => GetWesternZodiac());
+            var chineseSignTask = Task.Run(() => GetChineseZodiac());
+            var birthdayTask = Task.Run(() => CheckIfBirthday());
+
+            await Task.WhenAll(ageTask, sunSignTask, chineseSignTask, birthdayTask);
+
+            IsAdult = ageTask.Result;
+            SunSign = sunSignTask.Result;
+            ChineseSign = chineseSignTask.Result;
+            IsBirthday = birthdayTask.Result;
+        }
+
+        private bool CalculateIsAdult()
+        {
+            int age = CalculateAge();
+            return age >= 18;
+        }
+
+        private string GetWesternZodiac()
         {
             int day = BirthDate.Day, month = BirthDate.Month;
             return month switch
@@ -71,16 +114,16 @@ namespace Hromiak_WPF_project.Models
             };
         }
 
-        private string GetChineseZodiac(DateTime birthDate)
+        private string GetChineseZodiac()
         {
             string[] signs = { "Мавпа", "Півень", "Собака", "Свиня", "Щур", "Бик", "Тигр", "Кролик", "Дракон", "Змія", "Кінь", "Коза" };
             return signs[BirthDate.Year % 12];
         }
 
-        public event PropertyChangedEventHandler PropertyChanged; 
-        protected virtual void OnPropertyChanged(string propertyName) 
-        { 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); 
+        private bool CheckIfBirthday()
+        {
+            var today = DateTime.Today;
+            return BirthDate.Month == today.Month && BirthDate.Day == today.Day;
         }
     }
 }

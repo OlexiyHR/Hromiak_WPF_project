@@ -1,4 +1,5 @@
 ﻿using Hromiak_WPF_project.ViewModels;
+using Hromiak_WPF_project.Tools;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainViewModel();
+        DataContext = new MainViewModel(new Navigation());
     }
 }
