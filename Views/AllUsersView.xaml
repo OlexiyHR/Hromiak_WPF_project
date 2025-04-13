@@ -1,0 +1,57 @@
+﻿<Window x:Class="Hromiak_WPF_project.Views.AllUsersView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Hromiak_WPF_project.Views"
+        mc:Ignorable="d"
+        Title="AllUsersView" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Поля для фільтрації та сортування -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBox Width="200" Margin="5" 
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            <ComboBox Width="150" Margin="5" SelectedValuePath="Content" SelectedValue="{Binding SortProperty, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBoxItem Content="FirstName"/>
+                <ComboBoxItem Content="LastName"/>
+                <ComboBoxItem Content="BirthDate"/>
+                <ComboBoxItem Content="Email"/>
+                <ComboBoxItem Content="IsAdult"/>
+                <ComboBoxItem Content="SunSign"/>
+                <ComboBoxItem Content="ChineseSign"/>
+                <ComboBoxItem Content="IsBirthday"/>
+            </ComboBox>
+            <Button Content="Оновити" Width="80" Margin="5"
+                    Command="{Binding SaveCommand}"/>
+        </StackPanel>
+
+        <!-- DataGrid зі списком користувачів -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding DisplayedUsers}" 
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  SelectedItem="{Binding SelectedUser, Mode=TwoWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Ім'я" Binding="{Binding FirstName}" Width="*"/>
+                <DataGridTextColumn Header="Прізвище" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                <DataGridTextColumn Header="Дата народження" Binding="{Binding BirthDate, StringFormat='{}{0:dd.MM.yyyy}' }" Width="*"/>
+                <DataGridTextColumn Header="Дорослий" Binding="{Binding IsAdult}" Width="*"/>
+                <DataGridTextColumn Header="Західний знак" Binding="{Binding SunSign}" Width="*"/>
+                <DataGridTextColumn Header="Китайський знак" Binding="{Binding ChineseSign}" Width="*"/>
+                <DataGridTextColumn Header="День народження" Binding="{Binding IsBirthday}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Кнопки для CRUD операцій -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Додати" Width="80" Margin="5" Command="{Binding AddUserCommand}" />
+            <Button Content="Редагувати" Width="80" Margin="5" Command="{Binding EditUserCommand}" CommandParameter="{Binding SelectedUser}" />
+            <Button Content="Видалити" Width="80" Margin="5" Command="{Binding DeleteUserCommand}" CommandParameter="{Binding SelectedUser}" />
+        </StackPanel>
+    </Grid>
+</Window>

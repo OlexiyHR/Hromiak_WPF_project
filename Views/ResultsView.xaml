@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hromiak_WPF_project.Views"
         mc:Ignorable="d"
-        Title="ResultsView" Height="300" Width="500" MinHeight="250" MinWidth="200">
+        Title="ResultsView" Height="325" Width="450" MinHeight="325" MinWidth="350">
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -15,5 +16,8 @@
         <TextBlock Grid.Row="0" Text="{Binding Greeting}" FontSize ="18" FontWeight="Bold" Margin="0,0,0,20"/>
 
         <TextBlock Grid.Row="1" Text="{Binding UserInfo}" FontSize ="14"/>
+
+        <!-- Кнопка для переходу на вікно з усіма результатами -->
+        <Button Grid.Row="2" Content="Переглянути список всіх користувачів" Command="{Binding ShowAllUsersCommand}" Margin="0,20,0,0"/>
     </Grid>
 </Window>

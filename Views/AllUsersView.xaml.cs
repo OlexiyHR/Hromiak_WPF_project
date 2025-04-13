@@ -1,5 +1,4 @@
-﻿using Hromiak_WPF_project.Models;
-using Hromiak_WPF_project.Tools;
+﻿using Hromiak_WPF_project.Tools;
 using Hromiak_WPF_project.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,17 +12,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Hromiak_WPF_project.Views
 {
-    public partial class ResultsView : Window
+    /// <summary>
+    /// Interaction logic for AllUsersView.xaml
+    /// </summary>
+    public partial class AllUsersView : Window
     {
-        public ResultsView(Person user)
+        public AllUsersView()
         {
             InitializeComponent();
-            DataContext = new ResultsViewModel(user, new Navigation());
+            DataContext = new AllUsersViewModel();
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace Hromiak_WPF_project.Tools
 {
-    public class Navigation
+    public class Navigation : INavigation
     {
         public void NavigateToResults(Person person)
         {
@@ -19,6 +19,12 @@ namespace Hromiak_WPF_project.Tools
 
            //Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
            // Application.Current.MainWindow.Close();
+        }
+
+        public void NavigateToAllUsers()
+        {
+            var allUsersWindow = new AllUsersView();
+            allUsersWindow.Show();
         }
     }
 }

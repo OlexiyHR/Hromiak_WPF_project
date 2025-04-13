@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -15,7 +16,6 @@ namespace Hromiak_WPF_project.Models
         public string LastName { get; }
         public string Email { get; }
         public DateTime BirthDate { get; }
-
         public bool IsAdult { get; private set; }
         public string SunSign { get; private set; }
         public string ChineseSign { get; private set; }
@@ -124,6 +124,20 @@ namespace Hromiak_WPF_project.Models
         {
             var today = DateTime.Today;
             return BirthDate.Month == today.Month && BirthDate.Day == today.Day;
+        }
+
+        [JsonConstructor]
+        public Person(string firstName, string lastName, string email, DateTime birthDate,
+              bool isAdult, string sunSign, string chineseSign, bool isBirthday)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            BirthDate = birthDate;
+            IsAdult = isAdult;
+            SunSign = sunSign;
+            ChineseSign = chineseSign;
+            IsBirthday = isBirthday;
         }
     }
 }

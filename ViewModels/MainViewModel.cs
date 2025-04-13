@@ -1,5 +1,4 @@
 ﻿using Hromiak_WPF_project.Models;
-using Hromiak_WPF_project.Views;
 using Hromiak_WPF_project.Tools;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Hromiak_WPF_project.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly Navigation _navigationService;
+        private readonly INavigation _navigationService;
 
         private string _firstName;
         private string _lastName;
@@ -93,7 +92,7 @@ namespace Hromiak_WPF_project.ViewModels
 
         public ICommand ProceedCommand { get; }
 
-        public MainViewModel(Navigation navigationService)
+        public MainViewModel(INavigation navigationService)
         {
             ProceedCommand = new RelayCommand(async () => await ProceedAsync(), () => CanProceed && !IsCalculating);
             _navigationService = navigationService;
